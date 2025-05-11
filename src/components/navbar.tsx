@@ -1,139 +1,169 @@
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { Link, useLocation } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
+import { Logo } from "@/components/logo";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 
-interface LogoProps {
-  variant?: "default" | "icon";
-  className?: string;
-}
-
-export function Logo({ variant = "default", className }: LogoProps) {
-  // Icon-only variant
-  if (variant === "icon") {
-    return (
-      <svg
-        width="32"
-        height="32"
-        viewBox="0 0 32 32"
-        fill="none"
-        className={cn("text-primary", className)}
-      >
-        <path
-          d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 4c1.61 0 3.16.312 4.578.88L13.12 14.422a9.935 9.935 0 00-.88-4.578A9.977 9.977 0 0116 6zm-4.834 2.46a9.967 9.967 0 00-2.21 3.586 9.912 9.912 0 00-.637 3.493c0 3.268 1.63 6.152 4.117 7.896L8.56 19.56l2.606-11.1zm4.834 15.54c-2.736 0-5.217-1.086-7.035-2.852l6.852-3.178L22.46 8.166a9.924 9.924 0 012.88 5.097c.106.581.16 1.178.16 1.795 0 5.522-4.477 10-10 10z"
-          fill="currentColor"
-        />
-      </svg>
-    );
-  }
-
-  // Full logo (default)
+export function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [location] = useLocation();
+  const { user, logoutMutation } = useAuth();
+  
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const closeMenu = () => setIsOpen(false);
+  
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
+  
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/dashboard", label: "Dashboard", requiresAuth: true },
+    { href: "/projects", label: "My Projects", requiresAuth: true },
+    { href: "/ai-studio", label: "AI Studio", requiresAuth: true },
+    { href: "/library", label: "Library", requiresAuth: true },
+    { href: "/subscription", label: "Pricing" },
+    { href: "/branding", label: "Branding" }
+  ];
+  
   return (
-    <div className={cn("flex items-center", className)}>
-      <svg
-        width="32"
-        height="32"
-        viewBox="0 0 32 32"
-        fill="none"
-        className="text-primary mr-2"
-      >
-        <path
-          d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 4c1.61 0 3.16.312 4.578.88L13.12 14.422a9.935 9.935 0 00-.88-4.578A9.977 9.977 0 0116 6zm-4.834 2.46a9.967 9.967 0 00-2.21 3.586 9.912 9.912 0 00-.637 3.493c0 3.268 1.63 6.152 4.117 7.896L8.56 19.56l2.606-11.1zm4.834 15.54c-2.736 0-5.217-1.086-7.035-2.852l6.852-3.178L22.46 8.166a9.924 9.924 0 012.88 5.097c.106.581.16 1.178.16 1.795 0 5.522-4.477 10-10 10z"
-          fill="currentColor"
-        />
-      </svg>
-      <span className="text-xl font-semibold">Echoverse</span>
-    </div>
-  );
-}
-
-// Animated logo version with motion effects
-export function AnimatedLogo({ className }: { className?: string }) {
-  // Logo circle animation variants
-  const circleVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  // Logo text animation variants
-  const textVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.5,
-        delay: 0.3,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  // Rays animation (the paths inside the logo)
-  const raysVariants = {
-    hidden: { opacity: 0, pathLength: 0 },
-    visible: {
-      opacity: 1,
-      pathLength: 1,
-      transition: {
-        duration: 1.5,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  return (
-    <div className={cn("flex items-center", className)}>
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={circleVariants}
-        className="relative"
-      >
-        <motion.svg
-          width="48"
-          height="48"
-          viewBox="0 0 32 32"
-          fill="none"
-          className="text-primary mr-3"
-        >
-          {/* Base circle */}
-          <motion.path
-            d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2z"
-            fill="currentColor"
-            opacity="0.2"
-          />
-          {/* Animated paths */}
-          <motion.path
-            d="M16 6c1.61 0 3.16.312 4.578.88L13.12 14.422a9.935 9.935 0 00-.88-4.578A9.977 9.977 0 0116 6z"
-            fill="currentColor"
-            variants={raysVariants}
-          />
-          <motion.path
-            d="M11.166 8.46a9.967 9.967 0 00-2.21 3.586 9.912 9.912 0 00-.637 3.493c0 3.268 1.63 6.152 4.117 7.896L8.56 19.56l2.606-11.1z"
-            fill="currentColor"
-            variants={raysVariants}
-          />
-          <motion.path
-            d="M16 24c-2.736 0-5.217-1.086-7.035-2.852l6.852-3.178L22.46 8.166a9.924 9.924 0 012.88 5.097c.106.581.16 1.178.16 1.795 0 5.522-4.477 10-10 10z"
-            fill="currentColor"
-            variants={raysVariants}
-          />
-        </motion.svg>
-      </motion.div>
-
-      <motion.div
-        variants={textVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <span className="text-2xl font-bold tracking-tight">Echoverse</span>
-      </motion.div>
-    </div>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-primary/20">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <Link href="/">
+          <div className="flex items-center gap-2 cursor-pointer">
+            <Logo />
+          </div>
+        </Link>
+        
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-8">
+          {navLinks.map((link) => {
+            // Don't show links that require auth if user is not logged in
+            if (link.requiresAuth && !user) return null;
+            
+            return (
+              <Link key={link.href} href={link.href}>
+                <div className="text-gray-300 hover:text-white transition-colors cursor-pointer">
+                  {link.label}
+                </div>
+              </Link>
+            );
+          })}
+        </nav>
+        
+        <div className="flex items-center gap-3">
+          {user ? (
+            <>
+              <div className="hidden md:block text-sm text-gray-300">
+                Welcome, {user.username}
+              </div>
+              <Button
+                variant="outline"
+                className="hidden md:block"
+                onClick={handleLogout}
+              >
+                Log Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/auth">
+                <Button variant="outline" className="hidden md:block">
+                  Log In
+                </Button>
+              </Link>
+              <Link href="/auth">
+                <Button className="shadow-glow">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
+          
+          <button 
+            className="md:hidden text-white"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+      </div>
+      
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-background/95 backdrop-blur-md border-b border-primary/20"
+          >
+            <nav className="container mx-auto px-4 py-5 flex flex-col space-y-4">
+              {navLinks.map((link) => {
+                // Don't show links that require auth if user is not logged in
+                if (link.requiresAuth && !user) return null;
+                
+                return (
+                  <Link key={link.href} href={link.href}>
+                    <div 
+                      className="text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
+                      onClick={closeMenu}
+                    >
+                      {link.label}
+                    </div>
+                  </Link>
+                );
+              })}
+              
+              {user ? (
+                <>
+                  <div className="text-sm text-gray-300 py-2">
+                    Welcome, {user.username}
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      handleLogout();
+                      closeMenu();
+                    }}
+                    className="w-full"
+                  >
+                    Log Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth">
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={closeMenu}
+                    >
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link href="/auth">
+                    <Button 
+                      className="w-full shadow-glow"
+                      onClick={closeMenu}
+                    >
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
   );
 }

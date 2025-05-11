@@ -51,11 +51,10 @@ export function Logo({ variant = "default", className }: LogoProps) {
 export function AnimatedLogo({ className }: { className?: string }) {
   // Logo circle animation variants
   const circleVariants = {
-    hidden: { opacity: 0, scale: 0.8, color: "rgb(0, 0, 0)" },
+    hidden: { opacity: 0, scale: 0.8 },
     visible: { 
       opacity: 1, 
       scale: 1,
-      color: "rgb(255, 255, 255)", // Transition to white
       transition: { 
         duration: 0.8,
         ease: "easeOut"
@@ -65,11 +64,10 @@ export function AnimatedLogo({ className }: { className?: string }) {
 
   // Logo text animation variants
   const textVariants = {
-    hidden: { opacity: 0, x: -20, color: "rgb(0, 0, 0)" },
+    hidden: { opacity: 0, x: -20 },
     visible: { 
       opacity: 1, 
       x: 0,
-      color: "rgb(255, 255, 255)", // Transition to white
       transition: { 
         duration: 0.5,
         delay: 0.3,
@@ -105,7 +103,7 @@ export function AnimatedLogo({ className }: { className?: string }) {
           viewBox="0 0 32 32"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="mr-3"
+          className="text-primary mr-3"
         >
           {/* Base circle */}
           <motion.path
