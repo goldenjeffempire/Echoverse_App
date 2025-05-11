@@ -1,4 +1,3 @@
-
 import { DashboardLayout } from "@/components/layouts/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function ApiDocsPage() {
   const { toast } = useToast();
 
+  // Function to copy text to the clipboard
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
@@ -39,6 +39,7 @@ export default function ApiDocsPage() {
             <TabsTrigger value="ai">AI Services</TabsTrigger>
           </TabsList>
 
+          {/* Authentication Tab */}
           <TabsContent value="authentication">
             <Card>
               <CardHeader>
@@ -47,9 +48,7 @@ export default function ApiDocsPage() {
               <CardContent className="space-y-4">
                 <div className="bg-muted p-4 rounded-md">
                   <div className="flex justify-between items-start">
-                    <pre className="text-sm">
-                      POST /api/auth/token
-                    </pre>
+                    <pre className="text-sm">POST /api/auth/token</pre>
                     <Button variant="ghost" size="sm" onClick={() => copyToClipboard("/api/auth/token")}>
                       <Copy className="w-4 h-4" />
                     </Button>
@@ -63,6 +62,7 @@ export default function ApiDocsPage() {
             </Card>
           </TabsContent>
 
+          {/* Jobs API Tab */}
           <TabsContent value="jobs">
             <Card>
               <CardHeader>
@@ -71,9 +71,7 @@ export default function ApiDocsPage() {
               <CardContent className="space-y-4">
                 <div className="bg-muted p-4 rounded-md">
                   <div className="flex justify-between items-start">
-                    <pre className="text-sm">
-                      GET /api/jobs
-                    </pre>
+                    <pre className="text-sm">GET /api/jobs</pre>
                     <Button variant="ghost" size="sm" onClick={() => copyToClipboard("/api/jobs")}>
                       <Copy className="w-4 h-4" />
                     </Button>
@@ -83,6 +81,7 @@ export default function ApiDocsPage() {
             </Card>
           </TabsContent>
 
+          {/* Calendar API Tab */}
           <TabsContent value="calendar">
             <Card>
               <CardHeader>
@@ -91,10 +90,27 @@ export default function ApiDocsPage() {
               <CardContent className="space-y-4">
                 <div className="bg-muted p-4 rounded-md">
                   <div className="flex justify-between items-start">
-                    <pre className="text-sm">
-                      POST /api/calendar/events
-                    </pre>
+                    <pre className="text-sm">POST /api/calendar/events</pre>
                     <Button variant="ghost" size="sm" onClick={() => copyToClipboard("/api/calendar/events")}>
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* AI Services Tab */}
+          <TabsContent value="ai">
+            <Card>
+              <CardHeader>
+                <CardTitle>AI Services</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-muted p-4 rounded-md">
+                  <div className="flex justify-between items-start">
+                    <pre className="text-sm">POST /api/ai/predict</pre>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard("/api/ai/predict")}>
                       <Copy className="w-4 h-4" />
                     </Button>
                   </div>
