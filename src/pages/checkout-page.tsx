@@ -14,17 +14,17 @@ import { apiRequest } from "@/lib/queryClient";
 import { MainLayout } from "@/components/layouts/main-layout";
 
 // Make sure to call loadStripe outside of a component
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY!);
+
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
   throw new Error("Missing Stripe public key");
 }
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const [location, setLocation] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,17 +42,17 @@ function CheckoutForm() {
       },
     });
 
-    if (error.type === "card_error" || error.type === "validation_error") {
+    if (error) {
       toast({
         title: "Payment Failed",
-        description: error.message || "An unexpected error occurred.",
+        description: error.message || "An unexpected error occurred during payment processing.",
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Payment Failed",
-        description: "An unexpected error occurred.",
-        variant: "destructive",
+        title: "Payment Successful",
+        description: "Thank you for your purchase!",
+        variant: "success",
       });
     }
 
@@ -106,6 +106,7 @@ export default function CheckoutPage() {
   const appearance = {
     theme: 'stripe' as const,
   };
+  
   const options = {
     clientSecret,
     appearance,

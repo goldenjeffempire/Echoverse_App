@@ -1,21 +1,12 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/mode-toggle";
-import type { ProjectComponent, InsertProjectComponent } from "@/types/whatever";
 import { cn } from "@/lib/utils";
-import {
-  Search,
-  Menu,
-  X,
-  LogOut,
-  User,
-  Bell,
-  Settings,
-} from "lucide-react";
+import { Search, Menu, LogOut, User, Bell, Settings } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,13 +15,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Toaster, toast } from "react-hot-toast"; // Ensure correct import for toast
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const [location, setLocation] = useLocation();
+  const [location] = useLocation();
   const { user, logoutMutation } = useAuth();
   const avatarUrl = user?.avatar || null;
 
@@ -55,6 +47,11 @@ export function MainLayout({ children }: MainLayoutProps) {
     { label: "AI Studio", href: "/ai-studio" },
     { label: "Projects", href: "/projects" },
   ];
+
+  useEffect(() => {
+    // Test toast notification to ensure Toaster works
+    toast.success("MainLayout Loaded!"); // This will trigger a toast on load
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
