@@ -5,7 +5,7 @@ import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Toaster } from "@/components/ui/toaster";  type ProjectComponent, type InsertProjectComponent, type SubscriptionPlan, type InsertSubscriptionPlan
+import type { ProjectComponent, InsertProjectComponent } from "@/types/whatever";
 import { cn } from "@/lib/utils";
 import {
   Search,

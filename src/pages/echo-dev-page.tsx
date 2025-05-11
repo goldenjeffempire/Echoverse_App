@@ -7,7 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Code2, Sparkles, Bug, FileCode2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-export default function EchoDevPage() {
+export default async function EchoDevPage() {
   const [prompt, setPrompt] = useState("");
   const [language, setLanguage] = useState("javascript");
   const [type, setType] = useState("code");
