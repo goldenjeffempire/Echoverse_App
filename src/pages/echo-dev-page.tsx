@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-import { Code2, Sparkles, Bug, FileCode2, Loader2 } from "lucide-react";
+import { Sparkles, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-export default async function EchoDevPage() {
+export default function EchoDevPage() {
   const [prompt, setPrompt] = useState("");
   const [language, setLanguage] = useState("javascript");
   const [type, setType] = useState("code");
@@ -61,6 +61,7 @@ export default async function EchoDevPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Code Generation Section */}
           <Card>
             <CardHeader>
               <CardTitle>Generate Code</CardTitle>
@@ -128,6 +129,7 @@ export default async function EchoDevPage() {
             </CardContent>
           </Card>
 
+          {/* Result Output Section */}
           <Card>
             <CardHeader>
               <CardTitle>Generated Output</CardTitle>
@@ -136,107 +138,6 @@ export default async function EchoDevPage() {
               <div className="relative min-h-[400px] rounded-md bg-muted p-4">
                 <pre className="overflow-auto">
                   <code className="text-sm">{result || "Output will appear here..."}</code>
-                </pre>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </DashboardLayout>
-  );
-
-      const data = await response.json();
-      setResult(data.result);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to generate code. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <DashboardLayout>
-      <div className="container py-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">EchoDevBot</h1>
-            <p className="text-muted-foreground">AI-powered code generation and development assistance</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Code Generation</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="block mb-2 text-sm font-medium">Programming Language</label>
-                <Select
-                  value={language}
-                  onValueChange={setLanguage}
-                  options={[
-                    { label: "JavaScript", value: "javascript" },
-                    { label: "Python", value: "python" },
-                    { label: "TypeScript", value: "typescript" },
-                    { label: "Java", value: "java" },
-                    { label: "C++", value: "cpp" }
-                  ]}
-                />
-              </div>
-
-              <div>
-                <label className="block mb-2 text-sm font-medium">Generation Type</label>
-                <Select
-                  value={type}
-                  onValueChange={setType}
-                  options={[
-                    { label: "Code Generation", value: "code" },
-                    { label: "Debug Assistance", value: "debug" },
-                    { label: "Code Review", value: "review" },
-                    { label: "Architecture Design", value: "architecture" }
-                  ]}
-                />
-              </div>
-
-              <div>
-                <label className="block mb-2 text-sm font-medium">Prompt</label>
-                <Textarea
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe what you want to build or the problem you need help with..."
-                  rows={5}
-                />
-              </div>
-
-              <Button onClick={generateCode} disabled={isLoading} className="w-full">
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Generate
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Result</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="relative min-h-[300px] rounded-md bg-muted p-4">
-                <pre className="whitespace-pre-wrap break-words">
-                  <code>{result || "Generated code will appear here..."}</code>
                 </pre>
               </div>
             </CardContent>

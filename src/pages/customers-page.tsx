@@ -85,14 +85,7 @@ export default function CustomersPage() {
   );
 }
 
-import { DashboardLayout } from "@/components/layouts/dashboard-layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-
-export default function CustomersPage2() {
+export function CustomersPage2() {
   const customers = [
     { name: "John Doe", email: "john@example.com", status: "Active", orders: 5 },
     { name: "Jane Smith", email: "jane@example.com", status: "Active", orders: 3 },

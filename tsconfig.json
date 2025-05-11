@@ -1,5 +1,11 @@
 {
-  "files": [],
+  "compilerOptions": {
+    "baseUrl": ".",      // Set the baseUrl to the root of the project
+    "paths": {
+      "@/*": ["src/*"],  // Resolves '@' to the "src" folder
+      "@shared/*": ["src/shared/*"] // If you have a shared folder, set the alias here
+    }
+  },
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
