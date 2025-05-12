@@ -1,51 +1,53 @@
 
-import React from 'react';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 interface Props {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
-  error?: Error;
+  error: Error | null;
 }
 
-export class ErrorBoundary extends React.Component<Props, State> {
+export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
+    error: null
   };
 
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Uncaught error:', error, errorInfo);
   }
 
   private handleReset = () => {
-    this.setState({ hasError: false, error: undefined });
+    this.setState({ hasError: false, error: null });
+    window.location.reload();
   };
 
   public render() {
     if (this.state.hasError) {
-      return (
-        <Alert variant="destructive" className="m-4">
-          <AlertTitle>Something went wrong</AlertTitle>
-          <AlertDescription className="mt-2">
-            <p>{this.state.error?.message || 'An unexpected error occurred'}</p>
-            <Button 
-              variant="outline" 
-              className="mt-4"
-              onClick={this.handleReset}
-            >
-              Try Again
-            </Button>
-          </AlertDescription>
-        </Alert>
+      return this.props.fallback || (
+        <div className="flex min-h-screen items-center justify-center bg-background p-4">
+          <Alert variant="destructive" className="max-w-md">
+            <AlertTitle className="text-xl mb-2">Something went wrong</AlertTitle>
+            <AlertDescription className="space-y-4">
+              <p className="text-sm opacity-90">
+                {this.state.error?.message || 'An unexpected error occurred'}
+              </p>
+              <Button onClick={this.handleReset} variant="outline" className="w-full">
+                Try Again
+              </Button>
+            </AlertDescription>
+          </Alert>
+        </div>
       );
     }
 
