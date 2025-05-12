@@ -1,14 +1,21 @@
-// main-layout.tsx
-
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
-import { Search, Menu, LogOut, User, Bell, Settings } from "lucide-react";
+import {
+  Search,
+  Menu,
+  X,
+  LogOut,
+  User,
+  Bell,
+  Settings,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,30 +24,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Toaster, toast } from "react-hot-toast";
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
-  const avatarUrl = user?.avatar || user?.avatarUrl || "";
-
-  const [searchTerm, setSearchTerm] = useState("");
+  const avatarUrl = user?.avatar || null;
 
   const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onError: () => toast.error("Logout failed. Please try again."),
-    });
+    logoutMutation.mutate();
   };
 
   const getInitials = (name?: string): string => {
     if (!name) return "U";
     return name
       .split(" ")
-      .map((part) => part[0])
+      .map(part => part[0])
       .join("")
       .toUpperCase()
       .substring(0, 2);
@@ -54,50 +56,43 @@ export function MainLayout({ children }: MainLayoutProps) {
     { label: "Projects", href: "/projects" },
   ];
 
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      toast.success("MainLayout Loaded!");
-    }
-  }, []);
-
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border">
         <div className="container flex h-16 items-center justify-between px-4 md:px-6">
-          {/* Logo & Nav */}
+          {/* Logo and Nav */}
           <div className="flex items-center gap-6 md:gap-8 lg:gap-10">
             <Link href="/" className="flex items-center space-x-2">
               <Logo variant="icon" className="h-8 w-8" />
-              <span className="font-semibold text-lg hidden md:inline">
-                Echoverse
-              </span>
+              <span className="font-semibold text-lg hidden md:inline">Echoverse</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-6">
               {mainMenuItems.map((item, index) => (
                 <Link key={index} href={item.href}>
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
-                    location === item.href
-                      ? "text-primary"
-                      : "text-muted-foreground"
+                  <a
+                    className={cn(
+                      "text-sm font-medium transition-colors hover:text-primary",
+                      location === item.href
+                        ? "text-primary"
+                        : "text-muted-foreground"
                     )}
+                  >
                     {item.label}
+                  </a>
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* Search + Actions */}
+          {/* Search and User Actions */}
           <div className="flex items-center gap-2">
             <div className="hidden md:flex relative">
               <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="search"
                 placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full h-9 rounded-md border border-border bg-background pl-8 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
@@ -113,7 +108,7 @@ export function MainLayout({ children }: MainLayoutProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={avatarUrl} />
+                    <AvatarImage src={user?.avatarUrl || ""} />
                     <AvatarFallback>
                       {getInitials(user?.fullName || user?.username)}
                     </AvatarFallback>
@@ -153,15 +148,21 @@ export function MainLayout({ children }: MainLayoutProps) {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="outline" size="icon" className="md:hidden">
+            <Button
+              variant="outline"
+              size="icon"
+              className="md:hidden"
+            >
               <Menu size={20} />
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Main */}
-      <main className="flex-1">{children}</main>
+      {/* Main content */}
+      <main className="flex-1">
+        {children}
+      </main>
 
       {/* Footer */}
       <footer className="border-t border-border bg-card py-6">
@@ -173,8 +174,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <span className="font-semibold">Echoverse</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Empowering you with integrated AI capabilities, social features,
-                and learning tools.
+                Empowering you with integrated AI capabilities, social features, and learning tools.
               </p>
             </div>
 
@@ -182,32 +182,52 @@ export function MainLayout({ children }: MainLayoutProps) {
               <div>
                 <h3 className="text-sm font-medium mb-2">Platform</h3>
                 <ul className="space-y-2 text-sm">
-                  {["/dashboard", "/ai-studio", "/library", "/social"].map(
-                    (href) => (
-                      <li key={href}>
-                        <Link href={href}>
-                          <span className="text-muted-foreground hover:text-foreground transition-colors">
-                            {href.replace("/", "").replace("-", " ")}
-                          </span>
-                        </Link>
-                      </li>
-                    )
-                  )}
+                  <li>
+                    <Link href="/dashboard">
+                      <span className="text-muted-foreground hover:text-foreground transition-colors">Dashboard</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/ai-studio">
+                      <span className="text-muted-foreground hover:text-foreground transition-colors">AI Studio</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/library">
+                      <span className="text-muted-foreground hover:text-foreground transition-colors">Library</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/social">
+                      <span className="text-muted-foreground hover:text-foreground transition-colors">Social</span>
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="text-sm font-medium mb-2">Company</h3>
                 <ul className="space-y-2 text-sm">
-                  {["/about", "/privacy", "/terms", "/contact"].map((href) => (
-                    <li key={href}>
-                      <Link href={href}>
-                        <span className="text-muted-foreground hover:text-foreground transition-colors">
-                          {href.replace("/", "")}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
+                  <li>
+                    <Link href="/about">
+                      <span className="text-muted-foreground hover:text-foreground transition-colors">About</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/privacy">
+                      <span className="text-muted-foreground hover:text-foreground transition-colors">Privacy</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/terms">
+                      <span className="text-muted-foreground hover:text-foreground transition-colors">Terms</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/contact">
+                      <span className="text-muted-foreground hover:text-foreground transition-colors">Contact</span>
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -234,7 +254,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         </div>
       </footer>
 
-      {/* Toaster */}
+      {/* Toast notifications */}
       <Toaster />
     </div>
   );

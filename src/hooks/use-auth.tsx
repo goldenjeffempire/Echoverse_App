@@ -4,6 +4,7 @@ import { queryClient } from "@/lib/queryClient";
 import { useToast } from "./use-toast";
 import { ReactNode } from "react";
 
+// --- Types ---
 interface User {
   id: string;
   username: string;
@@ -16,15 +17,18 @@ interface AuthState {
   setUser: (user: User | null) => void;
 }
 
+// --- Store ---
 const useAuthStore = create<AuthState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
 }));
 
+// --- Main Hook ---
 export function useAuth() {
   const { toast } = useToast();
   const { user, setUser } = useAuthStore();
 
+  // Fetch current user
   const { isLoading, error } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
@@ -40,9 +44,9 @@ export function useAuth() {
         return null;
       }
     },
-    initialData: user, // This ensures the query does not cause a re-render while data is loading
   });
 
+  // --- Login ---
   const loginMutation = useMutation({
     mutationFn: async (credentials: { username: string; password: string }) => {
       const res = await fetch("/api/login", {
@@ -75,6 +79,7 @@ export function useAuth() {
     },
   });
 
+  // --- Logout ---
   const logoutMutation = useMutation({
     mutationFn: async () => {
       const res = await fetch("/api/logout", { method: "POST" });
@@ -89,9 +94,39 @@ export function useAuth() {
         description: "You have been logged out.",
       });
     },
+  });
+
+  // --- Register ---
+  const registerMutation = useMutation({
+    mutationFn: async (newUser: {
+      username: string;
+      email: string;
+      password: string;
+    }) => {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Registration failed");
+      }
+
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setUser(data);
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast({
+        title: "Welcome!",
+        description: "Your account has been created.",
+      });
+    },
     onError: (error: Error) => {
       toast({
-        title: "Logout failed",
+        title: "Registration failed",
         description: error.message,
         variant: "destructive",
       });
@@ -101,12 +136,14 @@ export function useAuth() {
   return {
     user,
     isLoading,
+    isAuthenticated: !!user,
     loginMutation,
     logoutMutation,
-    isAuthenticated: !!user,
+    registerMutation,
   };
 }
 
+// --- Auth Provider Component ---
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -115,7 +152,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const { isLoading } = useAuth();
 
   if (isLoading) {
-    return <div>Loading...</div>; // You can replace this with a spinner component
+    return <div>Loading...</div>;
   }
 
   return <>{children}</>;
